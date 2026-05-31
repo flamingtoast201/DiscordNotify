@@ -152,6 +152,7 @@
     <ClInclude Include="httplib.h" />
     <ClInclude Include="Output.h" />
     <ClInclude Include="PushPayload.h" />
+    <ClInclude Include="secrets.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
