@@ -38,7 +38,7 @@ std::string Defaults::get_discord_webhook() {
     size_t len = 0;
     if (_dupenv_s(&env_url, &len, "DISCORD_WEBHOOK_URL") == 0 && env_url != nullptr) {
         std::string result(env_url);
-        free(env_url);
+        free(env_url); 
         return result;
     }
     std::cerr << "[CRITICAL] Environment variable DISCORD_WEBHOOK_URL not found!\n";
