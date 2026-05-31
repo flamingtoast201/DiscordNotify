@@ -24,6 +24,7 @@ public:
     // Public Functions
 	//------------------------------------------------------------------------------------------
     std::string get_criticism(const std::string& repo, const std::string& changes);
+    std::string get_criticism2(const std::string& repo, const std::string& changes);
     //==========================================================================================
 };
 //==============================================================================================
