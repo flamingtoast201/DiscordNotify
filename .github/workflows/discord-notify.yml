@@ -1,0 +1,63 @@
+name: Discord Notify
+
+on:
+  push:
+    branches:
+      - main
+  issue_comment:
+    types: [created]
+
+jobs:
+  discord:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Process Event and Dispatch Dual Streams
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "Error: DISCORD_WEBHOOK_URL secret not found."
+            exit 1
+          fi
+
+          # 1. Determine the event type and build the messages
+          if [ "${{ github.event_name }}" == "push" ]; then
+            TITLE="Code Push"
+            MSG="${{ github.event.head_commit.message }}"
+            URL="${{ github.event.head_commit.url }}"
+            REPO="${{ github.repository }}"
+          elif [ "${{ github.event_name }}" == "issue_comment" ]; then
+            ISSUE_NAME="${{ github.event.issue.title }}"
+            TITLE="Comment on: $ISSUE_NAME (#${{ github.event.issue.number }})"
+            MSG="${{ github.event.comment.body }}"
+            URL="${{ github.event.comment.html_url }}"
+            REPO="${{ github.repository }} (Comment)"
+          else
+            TITLE="GitHub Notification"
+            MSG="Action triggered by ${{ github.event_name }}"
+            URL="${{ github.event.repository.html_url }}"
+            REPO="${{ github.repository }}"
+          fi
+
+          # 2. Build the standard Discord notification payload safely using jq
+          payload=$(jq -n \
+            --arg un "Discord Notify Bot" \
+            --arg title "$TITLE" \
+            --arg repo "${{ github.repository }}" \
+            --arg user "${{ github.actor }}" \
+            --arg msg "$MSG" \
+            --arg url "$URL" \
+            '{
+              username: $un,
+              content: ("**\($title)**\n**Repo:** \($repo)\n**User:** \($user)\n**Content:** \($msg)\n**Link:** \($url)")
+            }')
+
+          # STREAM 1: Blasts the clean status embed notification directly to Discord
+          echo "Sending standard status log to Discord..."
+          curl -H "Content-Type: application/json" -d "$payload" "$DISCORD_WEBHOOK"
+
+          # STREAM 2: Blasts the raw JSON text to ntfy so your C++ engine intercepts it
+          echo "Piping data payload across the internet to C++ engine via ntfy..."
+          curl -s -X POST https://ntfy.sh/skysmith_dev_pipeline_2026 \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg repo "$REPO" --arg msg "$MSG" '{repository: {full_name: $repo}, message: $msg}')"
