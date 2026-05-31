@@ -26,7 +26,6 @@ namespace Defaults {
     std::string const GeminiPromptText();
     std::string get_gemini_key();
     std::string get_discord_webhook();
-    std::string get_key_from_local_file(const std::string& target_key);
     //=========================================================================================
 }  
 //==============================================================================================

@@ -32,6 +32,8 @@ int main() {
     std::cout << "======================================================\n";
     std::cout << "     CONDUIT ACTIVE: Stream-Parsing ntfy Receiver     \n";
     std::cout << "======================================================\n";
+	std::cout << "Developed by: Spicer Games (https://spicergames.com)\n";
+	std::cout << "V1.0 - 2026\n";
     std::cout << "Monitoring channel across the public internet...\n\n";
     //==========================================================================================
     // While True Execute Loop
