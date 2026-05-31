@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="DiscordInteract/DiscordInteract.vcxproj" Id="2de8d19e-97a2-42df-bca5-9974b7616f24" />
+</Solution>
